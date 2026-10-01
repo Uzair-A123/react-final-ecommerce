@@ -1,0 +1,13 @@
+@import "tailwindcss";
+
+/* dark: utilities follow the data-theme attribute set by ThemeContext */
+@custom-variant dark (&:where([data-theme=dark], [data-theme=dark] *));
+
+@layer base {
+  body { @apply bg-white text-gray-900 dark:bg-slate-900 dark:text-slate-100; }
+  a { @apply text-indigo-600; }
+  input, select, textarea {@apply rounded-md border border-gray-300 bg-white px-3 py-2 text-gray-900 dark:border-slate-600 dark:bg-slate-800 dark:text-slate-100;}
+  button { @apply cursor-pointer rounded-md border border-gray-300 px-3 py-1.5 hover:bg-gray-100 dark:border-slate-600 dark:hover:bg-slate-700; }
+  table { @apply w-full border-collapse text-left; }
+  th, td { @apply border-b border-gray-200 p-2 dark:border-slate-700; }
+}

@@ -1,0 +1,4 @@
+@keyframes fade-in { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
+.fade-in { animation: fade-in .35s ease-out both; }
+html { scroll-behavior: smooth; }
+:focus-visible { outline: 2px solid #4f46e5; outline-offset: 2px; }

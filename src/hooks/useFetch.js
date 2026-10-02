@@ -6,7 +6,8 @@ export default function useFetch(url) {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    let ignore = false; // ignore results if the component unmounts or the URL changes
+    if (!url) { setLoading(false); return; }
+    let ignore = false; // avoids setting state after unmount / URL change
     setLoading(true);
     setError(null);
 
@@ -19,7 +20,9 @@ export default function useFetch(url) {
       .catch((err) => !ignore && setError(err.message))
       .finally(() => !ignore && setLoading(false));
 
-    return () => { ignore = true; };
+    return () => {
+      ignore = true;
+    };
   }, [url]);
 
   return { data, loading, error };

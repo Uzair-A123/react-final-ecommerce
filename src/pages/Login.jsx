@@ -22,13 +22,18 @@ export default function Login() {
   };
 
   return (
-    <form onSubmit={handleSubmit}>
-      <h2 className="mb-4 text-2xl font-semibold">Login</h2>
-      <p className="text-sm text-gray-500 dark:text-slate-400">Demo: uzair@example.com / admin123</p>
-      {error && <p className="text-sm text-red-500">{error}</p>}
-      <input ref={emailRef} name="email" type="email" value={form.email} onChange={handleChange} placeholder="Email" />
-      <input name="password" type="password" value={form.password} onChange={handleChange} placeholder="Password" />
-      <button type="submit" className="bg-indigo-600 text-white hover:bg-indigo-700">Login</button>
-    </form>
+    <div className="flex min-h-[60vh] items-center justify-center">
+      <form
+        onSubmit={handleSubmit}
+        className="flex w-full max-w-md flex-col gap-3 rounded-xl border border-gray-200 bg-white p-6 shadow-sm dark:border-slate-700 dark:bg-slate-800"
+      >
+        <h2 className="text-2xl font-semibold">Login</h2>
+        <p className="text-sm text-gray-500 dark:text-slate-400">Demo: uzair@example.com / admin123</p>
+        {error && <p className="text-sm text-red-500">{error}</p>}
+        <input ref={emailRef} name="email" type="email" value={form.email} onChange={handleChange} placeholder="Email" />
+        <input name="password" type="password" value={form.password} onChange={handleChange} placeholder="Password" />
+        <button type="submit" className="bg-indigo-600 text-white hover:bg-indigo-700">Login</button>
+      </form>
+    </div>
   );
 }

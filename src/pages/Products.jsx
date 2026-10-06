@@ -1,5 +1,6 @@
 import { useState, useMemo, useRef, useEffect } from "react";
-import useFetch from "../hooks/useFetch";
+import useProducts from "../hooks/useProducts";
+import useRequireAuth from "../hooks/useRequireAuth";
 import { useCart } from "../context/CartContext";
 import SearchBar from "../components/SearchBar";
 import CategoryFilter from "../components/CategoryFilter";
@@ -7,22 +8,35 @@ import ProductList from "../components/ProductList";
 import Loading from "../components/Loading";
 
 export default function Products() {
-  const { data, loading, error } = useFetch("https://dummyjson.com/products?limit=100");
-  const { addToCart } = useCart();
+  const { products, loading, error } = useProducts();
+  const { cart, addToCart, increase, decrease, removeFromCart } = useCart();
+  const requireAuth = useRequireAuth();
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("all");
   const searchRef = useRef(null);
 
-  useEffect(() => { searchRef.current?.focus(); }, []);
+  useEffect(() => {
+    searchRef.current?.focus();
+  }, []);
 
-  const products = useMemo(() => data?.products ?? [], [data]);
-  const categories = useMemo(() => ["all", ...new Set(products.map((p) => p.category))], [products]);
+  const handleAdd = requireAuth(addToCart, "Please log in or sign up to add items to your cart.");
+  const handleIncrease = requireAuth(increase, "Please log in to manage your cart.");
+  const handleDecrease = requireAuth(decrease, "Please log in to manage your cart.");
+  const handleRemove = requireAuth(removeFromCart, "Please log in to manage your cart.");
+
+  const categories = useMemo(
+    () => ["all", ...new Set(products.map((p) => p.category))],
+    [products]
+  );
+
   const filtered = useMemo(() => {
     const q = search.toLowerCase();
     return products.filter(
       (p) =>
         (category === "all" || p.category === category) &&
-        (p.title.toLowerCase().includes(q) || p.description.toLowerCase().includes(q) || p.category.toLowerCase().includes(q))
+        (p.title.toLowerCase().includes(q) ||
+          p.description.toLowerCase().includes(q) ||
+          p.category.toLowerCase().includes(q))
     );
   }, [products, search, category]);
 
@@ -33,9 +47,20 @@ export default function Products() {
         <SearchBar ref={searchRef} value={search} onChange={setSearch} />
         <CategoryFilter categories={categories} value={category} onChange={setCategory} />
       </div>
-      {loading && <Loading text="Loading products..." />}
-      {error && <p className="text-red-500">Something went wrong. Please try again.</p>}
-      {!loading && !error && <ProductList products={filtered} onAdd={addToCart} />}
+      {loading && products.length === 0 && <Loading text="Loading products..." />}
+      {error && products.length === 0 && (
+        <p className="text-red-500">Something went wrong. Please try again.</p>
+      )}
+      {products.length > 0 && (
+        <ProductList
+          products={filtered}
+          cart={cart}
+          onAdd={handleAdd}
+          onIncrease={handleIncrease}
+          onDecrease={handleDecrease}
+          onRemove={handleRemove}
+        />
+      )}
     </div>
   );
 }
